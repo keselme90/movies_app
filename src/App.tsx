@@ -25,7 +25,14 @@ const App:React.FC<Props> = () => {
     <div className="App">
 
       <SearchBar onSubmitCallback={(searchQuerry) => {
-
+        axiosInstance.post<Movie>('/', null, {params: {t: searchQuerry}})
+          .then(res => {
+            const {data} = res
+          })
+          .catch(err => {
+            console.log(JSON.stringify(err));
+            
+          })
       }}/>
 
       <div className="body">
@@ -34,6 +41,39 @@ const App:React.FC<Props> = () => {
           Popular Movies
         </p>
 
+        <div className="wrapper">
+          <div style={{width:100, height: 100, backgroundColor:'cyan'}}>
+            1
+          </div>
+          <div style={{width:100, height: 100, backgroundColor:'cyan'}}>
+            2
+          </div>
+          <div style={{width:100, height: 100, backgroundColor:'cyan'}}>
+            3
+          </div>
+          <div style={{width:100, height: 100, backgroundColor:'cyan'}}>
+            4
+          </div>
+          <div style={{width:100, height: 100, backgroundColor:'cyan'}}>
+            5
+          </div>
+          <div style={{width:100, height: 100, backgroundColor:'cyan'}}>
+            6
+          </div>
+          <div style={{width:100, height: 100, backgroundColor:'cyan'}}>
+            7
+          </div>
+          <div style={{width:100, height: 100, backgroundColor:'cyan'}}>
+            8
+          </div>
+          <div style={{width:100, height: 100, backgroundColor:'cyan'}}>
+            9
+          </div>
+          <div style={{width:100, height: 100, backgroundColor:'cyan'}}>
+            10
+          </div>
+
+        </div>
       </div>
       
 

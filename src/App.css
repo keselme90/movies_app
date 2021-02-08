@@ -38,6 +38,12 @@
   margin: 0;
 }
 
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  row-gap: 20px;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
