@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import axiosInstance from './api/axios.instacne';
 import { Movie } from './models/types';
+import SearchBar from './components/SearchBar';
 
 interface Props {
 
@@ -22,7 +23,20 @@ const App:React.FC<Props> = () => {
 
   return (
     <div className="App">
+
+      <SearchBar onSubmitCallback={(searchQuerry) => {
+
+      }}/>
+
+      <div className="body">
+
+        <p className="Title">
+          Popular Movies
+        </p>
+
+      </div>
       
+
     </div>
   );
 }
