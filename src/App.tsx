@@ -4,21 +4,66 @@ import './App.css';
 import axiosInstance from './api/axios.instacne';
 import { Movie } from './models/types';
 import SearchBar from './components/SearchBar';
+import { AxiosResponse } from 'axios';
+import MovieCard from './components/MovieCard';
+import MovieModal from './components/Modal';
 
+const movieIds = [
+
+  "tt4154796",
+  "tt3741700",
+  "tt0468569",
+  "tt0119488",
+  "tt0114814",
+  "tt0064116",
+  "tt1853728",
+  "tt7286456",
+  "tt0816692",
+  "tt0086190"
+
+]
 interface Props {
 
 }
 
+interface State {
+  isLoading: boolean
+  movies: Array<Movie>
+  clickedMovieIndex: number
+  shouldOpenModal: boolean
+}
+
+const initialState: State = {
+  isLoading: true,
+  movies: [],
+  clickedMovieIndex: -1,
+  shouldOpenModal: false
+}
+
 const App:React.FC<Props> = () => {
 
+  const [state, setState] = React.useState(initialState)
+
   React.useEffect(() => {
-    axiosInstance.post<Movie>('/', null, {params: {t: 'Iron Man',}})
-      .then(res => {
-        const { data } = res
-      })
-      .catch(err => {
-        console.log(JSON.stringify(err));
-      })
+
+    const promises:Promise<AxiosResponse<Movie>>[] =  []
+
+    movieIds.forEach((movie) => {
+        console.log(movie);
+        
+        promises.push(axiosInstance.post<Movie>('/', null, {params: {i: movie}}))
+    })
+
+    Promise.all(promises)
+        .then(res => {
+            const movies: Array<Movie> = []
+
+            res.forEach(elem => {
+              movies.push(elem.data)
+            })
+            setState({isLoading: false, movies:movies})
+        })
+        .catch( err => console.log(JSON.stringify(err)))
   }, [])
 
   return (
@@ -41,39 +86,35 @@ const App:React.FC<Props> = () => {
           Popular Movies
         </p>
 
-        <div className="wrapper">
-          <div style={{width:100, height: 100, backgroundColor:'cyan'}}>
-            1
-          </div>
-          <div style={{width:100, height: 100, backgroundColor:'cyan'}}>
-            2
-          </div>
-          <div style={{width:100, height: 100, backgroundColor:'cyan'}}>
-            3
-          </div>
-          <div style={{width:100, height: 100, backgroundColor:'cyan'}}>
-            4
-          </div>
-          <div style={{width:100, height: 100, backgroundColor:'cyan'}}>
-            5
-          </div>
-          <div style={{width:100, height: 100, backgroundColor:'cyan'}}>
-            6
-          </div>
-          <div style={{width:100, height: 100, backgroundColor:'cyan'}}>
-            7
-          </div>
-          <div style={{width:100, height: 100, backgroundColor:'cyan'}}>
-            8
-          </div>
-          <div style={{width:100, height: 100, backgroundColor:'cyan'}}>
-            9
-          </div>
-          <div style={{width:100, height: 100, backgroundColor:'cyan'}}>
-            10
-          </div>
+        {
+          state.isLoading ? 
 
-        </div>
+          // TODO: create component or at least something better for loading stage
+            <div >
+                Loading Movies 
+            </div>
+            :
+            <div className="wrapper">
+              {
+                state.movies.map( (movie, index) => {
+                  return( 
+                    <MovieCard
+                      movie={movie}
+                      onClickCallback={() => {
+                        console.log('onClick callbak');
+                        
+                        setState(prevState => ({...prevState, shouldOpenModal: true, clickedMovieIndex: index}))
+                      }}
+                    />
+                  )
+                })
+              }
+              <MovieModal
+                          movie={state.movies[state.clickedMovieIndex]}
+                          shouldOpen={state.shouldOpenModal}
+              />
+            </div>
+        }
       </div>
       
 
