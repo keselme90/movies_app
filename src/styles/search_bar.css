@@ -1,14 +1,15 @@
 .search {
-    display: flex;
-    height: 50px;
+    display:flex;
+    height: 70px;
     justify-content: center;
     align-items: center;
     background-color: #1d2d50;
+    align-items: center;
 }
 
 .search_field {
     display: flex;
-    height: 90%;
+    height: 80%;
     flex: 0.95;
     background-color: #1e5f74;
     border-radius: 50px;
