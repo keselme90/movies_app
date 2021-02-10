@@ -12,4 +12,4 @@
 
 - Very basic and simple UI!!!
 - Not very responsive friendly.
-- You have to manually press the 'Enter Button' on the key board to start the search.
+- You have to manually press the 'Enter' button on the key board to start the search.
