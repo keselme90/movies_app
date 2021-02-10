@@ -6,6 +6,8 @@
 
 - It allows to run search query about any movie and show its details in a modal.
 
+- Network requests are handled by Axios.
+
 
 
 # Known Issues:
