@@ -44,6 +44,7 @@
   align-items: center;
   justify-content: center;
   background-color: yellowgreen;
+  padding: 20px 0;
 }
 
 @keyframes App-logo-spin {

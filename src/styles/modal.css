@@ -1,0 +1,19 @@
+.close {
+    position: absolute;
+    top:5;
+    left: 5;
+    width:50px;
+    height:50px;
+    border-radius: 50%;
+    font-Size:30px;
+    text-Align: center;
+    border: 3px;
+    border-Style: solid;
+    border-Color: rgb(53, 201, 90);
+    align-items: center;
+    color: rgb(53, 201, 90);;
+}
+
+.close:hover{
+    cursor: pointer;
+}

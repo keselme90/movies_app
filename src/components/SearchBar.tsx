@@ -24,6 +24,7 @@ const SearchBar: React.FC<Props> = ({onSubmitCallback}) => {
         event.preventDefault()
         console.log(`submitted value is ${state.searchValue}`);
         inputRef.current?.blur()
+        onSubmitCallback(state.searchValue)
     }
 
     return (
@@ -33,6 +34,7 @@ const SearchBar: React.FC<Props> = ({onSubmitCallback}) => {
             <div className="search_field">
                 <FaSearch className="search_icon"/>
                 <input
+                    style={{height:'90%', border:0, outline:'none'}}
                     ref={inputRef}
                     type="text" 
                     value={state.searchValue} 

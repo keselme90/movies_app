@@ -7,6 +7,7 @@ import SearchBar from './components/SearchBar';
 import { AxiosResponse } from 'axios';
 import MovieCard from './components/MovieCard';
 import MovieModal from './components/Modal';
+import { getMovieByName, getMovieList } from './service/networkService';
 
 const movieIds = [
 
@@ -29,14 +30,14 @@ interface Props {
 interface State {
   isLoading: boolean
   movies: Array<Movie>
-  clickedMovieIndex: number
+  movieToShowInModal: Movie | null
   shouldOpenModal: boolean
 }
 
 const initialState: State = {
   isLoading: true,
   movies: [],
-  clickedMovieIndex: -1,
+  movieToShowInModal: null,
   shouldOpenModal: false
 }
 
@@ -46,38 +47,45 @@ const App:React.FC<Props> = () => {
 
   React.useEffect(() => {
 
-    const promises:Promise<AxiosResponse<Movie>>[] =  []
+    async function fetchFilms() {
 
-    movieIds.forEach((movie) => {
-        console.log(movie);
-        
-        promises.push(axiosInstance.post<Movie>('/', null, {params: {i: movie}}))
-    })
-
-    Promise.all(promises)
+      await getMovieList()
         .then(res => {
-            const movies: Array<Movie> = []
-
-            res.forEach(elem => {
-              movies.push(elem.data)
-            })
-            setState({isLoading: false, movies:movies})
+          setState(prevState => ({...prevState, isLoading: false, movies:res}))  
         })
-        .catch( err => console.log(JSON.stringify(err)))
+        .catch(err => {
+          console.log(err);
+          setState(prevState => ({...prevState, isLoading: false}))
+        })
+    } 
+
+    fetchFilms();
+    
   }, [])
 
   return (
     <div className="App">
 
       <SearchBar onSubmitCallback={(searchQuerry) => {
-        axiosInstance.post<Movie>('/', null, {params: {t: searchQuerry}})
-          .then(res => {
-            const {data} = res
-          })
-          .catch(err => {
-            console.log(JSON.stringify(err));
-            
-          })
+        
+        async function fetchMovieByName (searchQuerry: string) {
+          getMovieByName(searchQuerry)
+            .then(res => {
+              if(res?.Error){
+                setState(prevState => ({...prevState, shouldOpenModal: false, movieToShowInModal:res}))
+                alert(`Sorry we could find anything about ${searchQuerry}`)
+              }
+              else {
+                setState(prevState => ({...prevState, shouldOpenModal: true, movieToShowInModal:res}))
+              }
+            }).catch(err => {
+              console.log(`error = ${JSON.stringify(err)}`);
+              setState(prevState => ({...prevState, shouldOpenModal: false, movieToShowInModal:null}))
+              alert(`Sorry we could find anything about ${searchQuerry}`)
+            })
+        }
+
+        fetchMovieByName(searchQuerry)
       }}/>
 
       <div className="body">
@@ -89,29 +97,34 @@ const App:React.FC<Props> = () => {
         {
           state.isLoading ? 
 
-          // TODO: create component or at least something better for loading stage
             <div >
                 Loading Movies 
             </div>
             :
             <div className="wrapper">
               {
-                state.movies.map( (movie, index) => {
-                  return( 
-                    <MovieCard
-                      movie={movie}
-                      onClickCallback={() => {
-                        console.log('onClick callbak');
-                        
-                        setState(prevState => ({...prevState, shouldOpenModal: true, clickedMovieIndex: index}))
-                      }}
-                    />
-                  )
-                })
+                state.movies.length === 0 ?
+                  <div>
+                    There was a problem loading movies
+                  </div> 
+                  :
+                  state.movies.map( (movie, index) => {
+                    return( 
+                      <MovieCard
+                        movie={movie}
+                        onClickCallback={() => {
+                          console.log('onClick callbak');
+                          
+                          setState(prevState => ({...prevState, shouldOpenModal: true, movieToShowInModal: movie}))
+                        }}
+                      />
+                    )
+                  })
               }
               <MovieModal
-                          movie={state.movies[state.clickedMovieIndex]}
+                          movie={state.movieToShowInModal!}
                           shouldOpen={state.shouldOpenModal}
+                          onCloseClick={() => setState(prevState => ({...prevState, shouldOpenModal: false}))}
               />
             </div>
         }
